@@ -1,6 +1,7 @@
-import React, {  useState } from 'react'
+import React, { useContext, useState } from 'react'
 import assets from '../assets/assets'
-//import { AuthContext } from '../context/AuthContext' // Adjust the path if needed
+import { AuthContext } from "../../context/AuthContext";
+ // Adjust the path if needed
 
 const Login = () => {
   const [currState, setCurrState] = useState("Sign up")
@@ -11,7 +12,7 @@ const Login = () => {
   const [profilePic, setProfilePic] = useState("")
   const [isDataSubmitted, setIsDataSubmitted] = useState(false)
 
-//const {login}=useContext(AuthContext)
+const {login}=useContext(AuthContext)
 
 
   const onSubmitHandler = (event) => {
@@ -31,8 +32,8 @@ const Login = () => {
       return
     }
 
-//login(currState==="Sign up" ? "signup" : "login", {
-     // fullName, email: personalEmail, password, bio})
+login(currState==="Sign up" ? "signup" : "login", {
+      fullName, email: personalEmail, password, bio})
 
     if (currState === 'Sign up' && isDataSubmitted) {
       console.log("Sign Up Data Submitted:", userData)
