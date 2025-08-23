@@ -7,11 +7,13 @@ import Profilepage from './pages/Profilepage';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { AuthContext } from "../context/AuthContext"; // Use named import
+import { AuthContext } from "../context/AuthContext";
+ // Use named import
 
 const App = () => {
   const { authUser } = useContext(AuthContext); // ✅ FIX: properly destructure authUser
   console.log("Auth User:", authUser);
+
 
   return (
     <div className="bg-[url('./src/assets/bgImage.svg')] bg-contain">

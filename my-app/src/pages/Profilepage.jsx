@@ -1,23 +1,43 @@
-
-
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 function Profilepage() {
-  const [avatar, setAvatar] = useState(null);
-  const [fullName, setFullName] = useState('');
-  const [bio, setBio] = useState('');
+  const { authUser, updateProfile } = useContext(AuthContext);
+  const navigate = useNavigate();
 
+  const [selectedImg, setSelectedImg] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(authUser?.profilePic || null);
+  const [fullName, setFullName] = useState(authUser?.fullName || "");
+  const [bio, setBio] = useState(authUser?.bio || "");
+
+  // Handle avatar file change
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setAvatar(URL.createObjectURL(file));
+      setSelectedImg(file);
+      setAvatarPreview(URL.createObjectURL(file)); // preview
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Submit logic can be added here
-    alert(`Profile Updated!\nName: ${fullName}\nBio: ${bio}`);
+
+    if (!selectedImg) {
+      await updateProfile({ fullName, bio });
+      alert(`Profile Updated!\nName: ${fullName}\nBio: ${bio}`);
+      navigate('/');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.readAsDataURL(selectedImg);
+    reader.onload = async () => {
+      const base64Image = reader.result;
+      await updateProfile({ profilePic: base64Image, fullName, bio });
+      alert(`Profile Updated!\nName: ${fullName}\nBio: ${bio}`);
+      navigate('/');
+    };
   };
 
   return (
@@ -30,10 +50,16 @@ function Profilepage() {
 
           {/* Avatar Upload */}
           <label htmlFor="avatar" className='flex items-center gap-3 cursor-pointer'>
-            <input onChange={handleAvatarChange} type="file" id='avatar' accept='.png, .jpg, .jpeg' hidden />
+            <input
+              onChange={handleAvatarChange}
+              type="file"
+              id='avatar'
+              accept='.png, .jpg, .jpeg'
+              hidden
+            />
             <div className="w-16 h-16 rounded-full overflow-hidden border border-gray-500 bg-gray-700 flex items-center justify-center">
-              {avatar ? (
-                <img src={avatar} alt="Avatar" className='w-full h-full object-cover' />
+              {avatarPreview ? (
+                <img src={avatarPreview} alt="Avatar" className='w-full h-full object-cover' />
               ) : (
                 <span className="text-xs text-gray-400">Upload</span>
               )}
@@ -72,8 +98,8 @@ function Profilepage() {
 
         {/* Profile Picture Preview (for larger screens) */}
         <div className='flex-1 flex items-center justify-center p-6 bg-gray-800 max-sm:hidden'>
-          {avatar ? (
-            <img src={avatar} alt="Profile Preview" className='w-48 h-48 object-cover rounded-full border-4 border-violet-600' />
+          {avatarPreview ? (
+            <img src={avatarPreview} alt="Profile Preview" className='w-48 h-48 object-cover rounded-full border-4 border-violet-600' />
           ) : (
             <div className='w-48 h-48 rounded-full border border-gray-600 flex items-center justify-center text-gray-400'>
               No Image
@@ -86,6 +112,3 @@ function Profilepage() {
 }
 
 export default Profilepage;
-
-
-

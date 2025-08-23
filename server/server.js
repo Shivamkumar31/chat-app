@@ -1,11 +1,28 @@
 import express from "express";
 import "dotenv/config";
+import dotenv from 'dotenv';
+dotenv.config();
 import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
 import { connectDB } from "./lib/db.js";
 import userRouter from "./router/Userrouter.js";
 import messageRouter from "./router/Messagerouter.js";
+
+// Verify environment variables are loaded
+console.log("Env check:", process.env.MONGO_URI); 
+
+// 1. EXPLICITLY load .env first
+
+
+// 2. Verify environment loading immediately
+console.log("Env variables check:", {
+  PORT: process.env.PORT,
+  MONGO_URI: process.env.MONGO_URI ? "*****" : "MISSING" // Mask sensitive data
+});
+
+
+
 
 // Create Express app and HTTP server
 const app = express();
@@ -44,7 +61,7 @@ io.on("connection", (socket) => {
 app.use("/api/status", (req, res) => res.send("Server is and this start of application"));
 
 app.use("/api/auth", userRouter);
-app.use("/api/message", messageRouter);
+app.use("/api/messages", messageRouter);
 
 // Connect to MongoDB
 await connectDB();
