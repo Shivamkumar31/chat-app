@@ -16,6 +16,9 @@ export const AuthContext = createContext(null);
   const [onlineUser, setOnlineUser] = useState([]);
   const [socket, setSocket] = useState(null);
 
+console.log("Backend URL:", import.meta.env.VITE_BACKEND_URL);
+
+
   const checkAuth = async () => {
     try {
       const { data } = await axios.get("/api/auth/check");
