@@ -26,7 +26,7 @@ export const ChatProvider = ({ children }) => {
   };
 
   // function to get message for selected user
-  const getMessages = async (userId) => {
+  const getMessages = async (userId) => {//userId
     try {
       const { data } = await axios.get(`/api/messages/${userId}`);
       if (data.success) {
@@ -38,11 +38,13 @@ export const ChatProvider = ({ children }) => {
   };
 
   // function to send message to selected user
-  const sendMessage = async (message) => {
+  const sendMessage = async (text,image=null) => {
     try {
       const { data } = await axios.post('/api/messages/send', {
-        userId: selectedUser._id,
-        message,
+         receiverId:selectedUser._id, //userId
+        text,
+       image,
+
       });
 
       if (data.success) {
@@ -54,6 +56,7 @@ export const ChatProvider = ({ children }) => {
       toast.error(error.message);
     }
   };
+
 
   // function to subscribe to messages for selected user
   const subscribeToMessages = async () => {

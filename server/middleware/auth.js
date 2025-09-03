@@ -4,36 +4,39 @@ import User from "../models/User.js"
 import jwt from "jsonwebtoken"
 
 
-
 export const protectRoute = async (req, res, next) => {
   try {
-    const token = req.headers.token;
+    let token;
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    // Check for token in Authorization header
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
 
-    const user = await User.findById(decoded.userId).select("password");
+    if (!token) {
+      return res.status(401).json({ success: false, message: "Not authorized, no token" });
+    }
 
-    if (!user) return res.json({ success: false, message: "User not found" });
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    // Find user (exclude password)
+    const user = await User.findById(decoded.userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
 
     req.user = user;
     next();
   } catch (error) {
     console.log(error.message);
-    res.json({ success: false, message: error.message });
+    res.status(401).json({ success: false, message: "Not authorized, token failed" });
   }
-}
-
-/// controllers to check if user is authhtentication 
-
-export const checkAuth=(req,res)=>{
-res.json({success:true,user:req.user});
-
-}
-
-
-
-
-
+};
 
 
 

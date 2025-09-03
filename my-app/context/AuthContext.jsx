@@ -19,17 +19,34 @@ export const AuthContext = createContext(null);
 console.log("Backend URL:", import.meta.env.VITE_BACKEND_URL);
 
 
-  const checkAuth = async () => {
-    try {
-      const { data } = await axios.get("/api/auth/check");
-      if (data.success) {
-        setAuthUser(data.user);
-        connectSocket(data.user);
-      }
-    } catch (error) {
-      toast.error(error.message);
+  // const checkAuth = async () => {
+  //   try {
+  //     const { data } = await axios.get("/api/auth/check");
+  //     if (data.success) {
+  //       setAuthUser(data.user);
+  //       connectSocket(data.user);
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.message);
+  //   }
+  // };
+const checkAuth = async () => {
+  try {
+    const { data } = await axios.get("/api/auth/check", {
+      headers: {
+        Authorization: `Bearer ${token}`,   // ✅ token attach every time
+      },
+    });
+
+    if (data.success) {
+      setAuthUser(data.user);
+      connectSocket(data.user);
     }
-  };
+  } catch (error) {
+    toast.error(error.response?.data?.message || error.message);
+  }
+}
+ 
 
   const login = async (state, credentials) => {
     try {
@@ -37,7 +54,10 @@ console.log("Backend URL:", import.meta.env.VITE_BACKEND_URL);
       if (data.success) {
         setAuthUser(data.userData);
         connectSocket(data.userData);
-        axios.defaults.headers.common["token"] = data.token;
+
+        //axios.defaults.headers.common["token"] = data.token;
+        axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+
         setToken(data.token);
         localStorage.setItem("token", data.token);
         toast.success(data.message);
@@ -88,7 +108,10 @@ console.log("Backend URL:", import.meta.env.VITE_BACKEND_URL);
 
   useEffect(() => {
     if (token) {
-      axios.defaults.headers.common["token"] = token;
+      //
+      //axios.defaults.headers.common["token"] = token;
+axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
       checkAuth();
     }
   }, [token]);

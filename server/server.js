@@ -9,6 +9,13 @@ import { connectDB } from "./lib/db.js";
 import userRouter from "./router/Userrouter.js";
 import messageRouter from "./router/Messagerouter.js";
 
+
+
+import bodyParser from "body-parser";
+
+
+
+
 // Verify environment variables are loaded
 console.log("Env check:", process.env.MONGO_URI); 
 
@@ -26,6 +33,14 @@ console.log("Env variables check:", {
 
 // Create Express app and HTTP server
 const app = express();
+
+// for hnadel large file uploads
+
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }))
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
 const server = http.createServer(app);
 
 // Middleware setup
@@ -41,21 +56,37 @@ export const io = new Server(server, {
 export const userSocketMap = {}; // { userId: socketId }
 
 // Socket.io connection handler
-io.on("connection", (socket) => { 
-    const userId = socket.handshake.query.userId; 
-    console.log("User Connected", userId);
+// io.on("connection", (socket) => { 
+//     const userId = socket.handshake.query.userId; 
+//     console.log("User Connected", userId);
 
-    if (userId) userSocketMap[userId] = socket.id;
+//     if (userId) userSocketMap[userId] = socket.id;
 
-    // Emit online users to all connected clients
+//     // Emit online users to all connected clients
+//     io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+//     socket.on("disconnect", () => { 
+//         console.log("User Disconnected", userId); 
+//         delete userSocketMap[userId]; 
+//         io.emit("getOnlineUsers", Object.keys(userSocketMap));
+//     });
+// });
+
+io.on("connection", (socket) => {
+  const userId = socket.handshake.query.userId;
+  if (userId) userSocketMap[userId] = socket.id;
+
+  io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+  socket.on("disconnect", () => {
+    delete userSocketMap[userId];
     io.emit("getOnlineUsers", Object.keys(userSocketMap));
-
-    socket.on("disconnect", () => { 
-        console.log("User Disconnected", userId); 
-        delete userSocketMap[userId]; 
-        io.emit("getOnlineUsers", Object.keys(userSocketMap));
-    });
+  });
 });
+
+
+
+ 
 
 // Router setup
 app.use("/api/status", (req, res) => res.send("Server is and this start of application"));
@@ -68,4 +99,4 @@ await connectDB();
 
 const PORT = process.env.PORT || 5000;
 
-server.listen(PORT, () => console.log("server is running on port :" + PORT));
+server.listen(PORT, () => console.log("server is running on port :" + PORT)); 
