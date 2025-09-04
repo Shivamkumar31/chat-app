@@ -119,8 +119,10 @@ export const checkAuth = (req, res, next) => {
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
-        success: false,
-        message: "Unauthorized: No token provided",
+        //success: false,
+       // message: "Unauthorized: No token provided",
+success: true, user: req.user
+
       });
     }
 
