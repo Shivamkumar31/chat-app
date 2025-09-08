@@ -1,4 +1,3 @@
-
 import { createContext, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -9,22 +8,28 @@ axios.defaults.baseURL = backendUrl;
 
 export const AuthContext = createContext(null);
 
-  export const AuthProvider = ({ children }) => {
-
+export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [authUser, setAuthUser] = useState(null);
-  const [onlineUser, setOnlineUser] = useState([]);
+  const [onlineUser, setOnlineUser] = useState([]); // ✅ keep consistent name
   const [socket, setSocket] = useState(null);
+
+  console.log("Backend URL:", import.meta.env.VITE_BACKEND_URL);
 
   const checkAuth = async () => {
     try {
-      const { data } = await axios.get("/api/auth/check");
+      const { data } = await axios.get("/api/auth/check", {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ always attach token
+        },
+      });
+
       if (data.success) {
         setAuthUser(data.user);
         connectSocket(data.user);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
@@ -34,7 +39,9 @@ export const AuthContext = createContext(null);
       if (data.success) {
         setAuthUser(data.userData);
         connectSocket(data.userData);
-        axios.defaults.headers.common["token"] = data.token;
+
+        axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+
         setToken(data.token);
         localStorage.setItem("token", data.token);
         toast.success(data.message);
@@ -51,7 +58,7 @@ export const AuthContext = createContext(null);
     setToken(null);
     setAuthUser(null);
     setOnlineUser([]);
-    axios.defaults.headers.common["token"] = null;
+    axios.defaults.headers.common["Authorization"] = null;
     toast.success("Logged out successfully");
     socket?.disconnect();
   };
@@ -73,7 +80,7 @@ export const AuthContext = createContext(null);
     const newSocket = io(backendUrl, {
       query: {
         userId: userData._id,
-      }
+      },
     });
     newSocket.connect();
     setSocket(newSocket);
@@ -85,7 +92,7 @@ export const AuthContext = createContext(null);
 
   useEffect(() => {
     if (token) {
-      axios.defaults.headers.common["token"] = token;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       checkAuth();
     }
   }, [token]);
@@ -96,36 +103,18 @@ export const AuthContext = createContext(null);
     setAuthUser,
     token,
     setToken,
-    onlineUser,
+    onlineUser, // ✅ correct name
     setOnlineUser,
     socket,
     setSocket,
     login,
     logout,
-    updateProfile
+    updateProfile,
   };
 
   return (
     <AuthContext.Provider value={value}>
-
-
       {children}
-
-      
     </AuthContext.Provider>
   );
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
