@@ -6,7 +6,7 @@
 
 ## Table of Contents
 
-* [Demo](#https://chat-app-ruddy-nine-52.vercel.app/login)
+* [Demo](#demo)
 * [Features](#features)
 * [Tech Stack](#tech-stack)
 * [Getting Started](#getting-started)
@@ -33,7 +33,7 @@ Add a link to a live demo or screenshots here (e.g., GitHub Pages, Vercel, Herok
 Example:
 
 ```
-https://your-demo-url.example.com
+https://chat-app-ruddy-nine-52.vercel.app/login
 ```
 
 ---
