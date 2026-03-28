@@ -7,6 +7,25 @@
 ## Table of Contents
 
 * [Demo](#demo)
+*  ### Screenshots
+
+ <img width="1914" height="866" alt="image" src="https://github.com/user-attachments/assets/2753493b-2ed7-4d69-a10a-fb2e246f9389" />
+  ##user 1
+  <img width="1918" height="872" alt="image" src="https://github.com/user-attachments/assets/6646f29d-4d6d-4ebd-a7dd-d817bc626343" />
+  ##user 2
+  <img width="1919" height="877" alt="image" src="https://github.com/user-attachments/assets/40b411c3-799b-4dff-b2f4-4bd2b2b81269" />
+
+## Test Credentials
+
+Open two different browser tabs (or use one normal + one incognito window):
+
+| User | Email | Password |
+|------|-------|----------|
+| User 1 | alice@test.com | test1234 |
+| User 2 | bob@test.com | test1234 |
+
+> Login as Alice in Tab 1 and Bob in Tab 2 — then chat between them in real time!
+
 * [Features](#features)
 * [Tech Stack](#tech-stack)
 * [Getting Started](#getting-started)
