@@ -18,6 +18,7 @@
 ## Test Credentials
 
 Open two different browser tabs (or use one normal + one incognito window):
+or you can use your own credintal and enjoy fast and secure messaging service 
 
 | User | Email | Password |
 |------|-------|----------|
